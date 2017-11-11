@@ -9,10 +9,13 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        FetchMovieData movieTask = new FetchMovieData();
-        movieTask.execute();
-
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState == null)
+        {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new MovieFragment())
+                    .commit();
+        }
     }
 }
