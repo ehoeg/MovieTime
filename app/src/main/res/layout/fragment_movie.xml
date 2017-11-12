@@ -5,7 +5,7 @@
     tools:context="com.example.hoege1.movietime.MovieFragment">
 
     <ListView
-        android:id="@+id/listview_movie_data"
+        android:id="@+id/movie_text_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

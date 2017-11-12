@@ -1,7 +1,8 @@
 package com.example.hoege1.movietime;
 
 
-import android.content.Intent;
+import android.content.ClipData;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,8 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,14 +60,14 @@ public class MovieFragment extends Fragment
         mMovieAdapter =
                 new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
-                        R.layout.list_item_poster, // The name of the layout ID.
-                        R.id.list_item_movie_textview, // The ID of the textview to populate.
+                        R.layout.list_item_movie, // The name of the layout ID.
+                        R.id.list_item_movie_data, // The ID of the textview to populate.
                         new ArrayList());
 
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_movie_data);
+        ListView listView = (ListView) rootView.findViewById(R.id.movie_text_view);
         listView.setAdapter(mMovieAdapter);
 
         // Inflate the layout for this fragment
@@ -82,8 +84,15 @@ public class MovieFragment extends Fragment
     {
         private final String LOG_TAG = FetchMovieData.class.getSimpleName();
 
+        // Construct the URL for the movie database
+        final String FORECAST_BASE_URL = "https://api.themoviedb.org/3";
+        final String QUERY_STRING = "movie/now_playing";
+        final String LANGUAGE_STRING = "en-US";
+        final String PAGE_NUM_STRING = "1";
+        final String API_KEY_STRING = "7f85df63fe917ac57f3c002f0b52ede6";
+
         private List<String> getMoviePosterFromJson(String movieJsonStr)
-                throws JSONException
+                throws JSONException, MalformedURLException
         {
             final String OWM_RESULTS = "results";
             final String OWM_POSTER_PATH = "poster_path";
@@ -95,9 +104,7 @@ public class MovieFragment extends Fragment
             for(int i=0; i<resultsArray.length(); i++)
             {
                 JSONObject movieData = resultsArray.getJSONObject(i);
-                posterArray.add(movieData.get(OWM_POSTER_PATH).toString());
-
-                Log.d(LOG_TAG, posterArray.get(i));
+                posterArray.add("http://image.tmdb.org/t/p/w185" + movieData.get(OWM_POSTER_PATH).toString());
             }
 
             return posterArray;
@@ -113,18 +120,8 @@ public class MovieFragment extends Fragment
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
-
             try
             {
-                // Construct the URL for the movie database
-                final String FORECAST_BASE_URL = "https://api.themoviedb.org/3";
-                final String QUERY_STRING = "movie/now_playing";
-                final String LANGUAGE_STRING = "en-US";
-                final String PAGE_NUM_STRING = "1";
-                final String API_KEY_STRING = "7f85df63fe917ac57f3c002f0b52ede6";
-
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendEncodedPath(QUERY_STRING)
                         .appendQueryParameter("api_key", API_KEY_STRING)
@@ -194,6 +191,7 @@ public class MovieFragment extends Fragment
                 mMovieAdapter.clear();
                 for(String moviePosterString : moviePosterResultStr)
                 {
+                    Log.d(LOG_TAG, moviePosterString);
                     mMovieAdapter.add(moviePosterString);
                 }
             }
