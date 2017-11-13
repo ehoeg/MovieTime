@@ -39,7 +39,6 @@ import java.util.List;
  */
 public class MovieFragment extends Fragment
 {
-
     private ArrayAdapter<ClipData.Item> mMovieAdapter;
 
     public MovieFragment()
@@ -58,24 +57,8 @@ public class MovieFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        // The ArrayAdapter will take data from a source and
-        // use it to populate the ListView it's attached to.
-        mMovieAdapter =
-                new ArrayAdapter<ClipData.Item>(
-                        getActivity(), // The current context (this activity)
-                        R.layout.list_item_movie, // The name of the layout ID.
-                        R.id.movie_poster_image_view, // The ID of the textview to populate.
-                        new ArrayList());
-
-        View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
-
-        // Get a reference to the ListView, and attach this adapter to it.
-        GridView gridView = (GridView) rootView.findViewById(R.id.movie_fragment_grid_view);
-        gridView.setAdapter(mMovieAdapter);
-        //ListView listView = (ListView) rootView.findViewById(R.id.movie_text_view);
-        //listView.setAdapter(mMovieAdapter);
-
         // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
         return rootView;
     }
 
@@ -184,7 +167,6 @@ public class MovieFragment extends Fragment
             {
                 Log.e(LOG_TAG, "Error ", e);
             }
-
             return null;
         }
 
@@ -198,8 +180,6 @@ public class MovieFragment extends Fragment
 
                 GridView gridview = (GridView) getActivity().findViewById(R.id.movie_fragment_grid_view);
                 gridview.setAdapter(new MoviePosterAdapter(getActivity(), moviePosterArray));
-
-                mMovieAdapter.clear();
             }
         }
     }
