@@ -13,8 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +40,7 @@ import java.util.List;
 public class MovieFragment extends Fragment
 {
 
-    private ArrayAdapter<String> mMovieAdapter;
+    private ArrayAdapter<ClipData.Item> mMovieAdapter;
 
     public MovieFragment()
     {
@@ -58,17 +61,19 @@ public class MovieFragment extends Fragment
         // The ArrayAdapter will take data from a source and
         // use it to populate the ListView it's attached to.
         mMovieAdapter =
-                new ArrayAdapter<String>(
+                new ArrayAdapter<ClipData.Item>(
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_movie, // The name of the layout ID.
-                        R.id.list_item_movie_data, // The ID of the textview to populate.
+                        R.id.movie_poster_image_view, // The ID of the textview to populate.
                         new ArrayList());
 
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.movie_text_view);
-        listView.setAdapter(mMovieAdapter);
+        GridView gridView = (GridView) rootView.findViewById(R.id.movie_fragment_grid_view);
+        gridView.setAdapter(mMovieAdapter);
+        //ListView listView = (ListView) rootView.findViewById(R.id.movie_text_view);
+        //listView.setAdapter(mMovieAdapter);
 
         // Inflate the layout for this fragment
         return rootView;
@@ -188,12 +193,13 @@ public class MovieFragment extends Fragment
         {
             if (moviePosterResultStr != null)
             {
+                String[] moviePosterArray = new String[moviePosterResultStr.size()];
+                moviePosterArray = moviePosterResultStr.toArray(moviePosterArray);
+
+                GridView gridview = (GridView) getActivity().findViewById(R.id.movie_fragment_grid_view);
+                gridview.setAdapter(new MoviePosterAdapter(getActivity(), moviePosterArray));
+
                 mMovieAdapter.clear();
-                for(String moviePosterString : moviePosterResultStr)
-                {
-                    Log.d(LOG_TAG, moviePosterString);
-                    mMovieAdapter.add(moviePosterString);
-                }
             }
         }
     }
