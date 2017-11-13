@@ -40,7 +40,7 @@ public class MoviePosterAdapter extends ArrayAdapter
             convertView = inflater.inflate(R.layout.list_item_movie, parent, false);
         }
 
-        Picasso.with(context).load(imageUrls[position]).fit().into((ImageView) convertView);
+        Picasso.with(context).load(imageUrls[position]).into((ImageView) convertView);
 
         return convertView;
     }
