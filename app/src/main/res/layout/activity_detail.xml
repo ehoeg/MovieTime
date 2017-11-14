@@ -1,0 +1,24 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.hoege1.movietime.DetailActivity">
+
+    <TextView
+        android:id="@+id/detail_movie_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/detail_movie_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:padding="5dp"
+        android:layout_below="@+id/detail_movie_text_view"
+        android:layout_alignLeft="@+id/detail_movie_text_view" />
+
+</RelativeLayout>

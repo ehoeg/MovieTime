@@ -2,7 +2,7 @@ package com.example.hoege1.movietime;
 
 
 import android.content.ClipData;
-import android.media.Image;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,12 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,6 +68,9 @@ public class MovieFragment extends Fragment
     public class FetchMovieData extends AsyncTask<Void, Void, List<String>>
     {
         private final String LOG_TAG = FetchMovieData.class.getSimpleName();
+        private String[] mMoviePosterArray;
+        private List<String> mMovieTitleArray = new ArrayList<String>();
+        private JSONArray mMovieJsonArray;
 
         // Construct the URL for the movie database
         final String FORECAST_BASE_URL = "https://api.themoviedb.org/3";
@@ -87,6 +87,7 @@ public class MovieFragment extends Fragment
             List<String> posterArray = new ArrayList<String>();
 
             JSONObject movieJson = new JSONObject(movieJsonStr);
+            mMovieJsonArray = movieJson.getJSONArray(OWM_RESULTS);
             JSONArray resultsArray = movieJson.getJSONArray(OWM_RESULTS);
 
             for(int i=0; i<resultsArray.length(); i++)
@@ -96,6 +97,24 @@ public class MovieFragment extends Fragment
             }
 
             return posterArray;
+        }
+
+        private List<String> getMovieTitleFromJson(String movieJsonStr)
+                throws JSONException, MalformedURLException
+        {
+            final String OWM_RESULTS = "results";
+            final String OWM_TITLE = "title";
+            List<String> movieTitleArray = new ArrayList<String>();
+
+            JSONObject movieJson = new JSONObject(movieJsonStr);
+            JSONArray resultsArray = movieJson.getJSONArray(OWM_RESULTS);
+
+            for(int i=0; i<resultsArray.length(); i++)
+            {
+                JSONObject movieData = resultsArray.getJSONObject(i);
+                movieTitleArray.add(movieData.get(OWM_TITLE).toString());
+            }
+            return movieTitleArray;
         }
 
         @Override
@@ -128,14 +147,16 @@ public class MovieFragment extends Fragment
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
+                if (inputStream == null)
+                {
                     // Nothing to do.
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null)
+                {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                     // But it does make debugging a *lot* easier if you print out the completed
                     // buffer for debugging.
@@ -147,7 +168,8 @@ public class MovieFragment extends Fragment
                     urlConnection.disconnect();
                 }
 
-                if (buffer.length() == 0) {
+                if (buffer.length() == 0)
+                {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
@@ -155,7 +177,9 @@ public class MovieFragment extends Fragment
                 // Parse the JSON data
                 try
                 {
-                    posterArray = getMoviePosterFromJson(buffer.toString());
+                    String bufferString = buffer.toString();
+                    posterArray = getMoviePosterFromJson(bufferString);
+                    mMovieTitleArray = getMovieTitleFromJson(bufferString);
                 }
                 catch (JSONException e)
                 {
@@ -175,11 +199,29 @@ public class MovieFragment extends Fragment
         {
             if (moviePosterResultStr != null)
             {
-                String[] moviePosterArray = new String[moviePosterResultStr.size()];
-                moviePosterArray = moviePosterResultStr.toArray(moviePosterArray);
+                mMoviePosterArray = new String[moviePosterResultStr.size()];
+                mMoviePosterArray = moviePosterResultStr.toArray(mMoviePosterArray);
 
                 GridView gridview = (GridView) getActivity().findViewById(R.id.movie_fragment_grid_view);
-                gridview.setAdapter(new MoviePosterAdapter(getActivity(), moviePosterArray));
+                gridview.setAdapter(new MoviePosterAdapter(getActivity(), mMoviePosterArray));
+
+                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
+                    {
+                        try
+                        {
+                            String movieData = mMovieJsonArray.getJSONObject(position).toString();
+                            Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movieData);
+                            startActivity(intent);
+                        }
+                        catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         }
     }
