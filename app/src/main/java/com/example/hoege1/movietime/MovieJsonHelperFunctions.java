@@ -33,12 +33,44 @@ public class MovieJsonHelperFunctions
     public String getMovieTitleFromJson(String movieJsonStr)
             throws JSONException, MalformedURLException
     {
-        final String OWM_TITLE = "title";
         String movieTitle;
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
         movieTitle = movieJson.get("title").toString();
 
         return movieTitle;
+    }
+
+    public String getMovieDescriptionFromJson(String movieJsonStr)
+            throws JSONException, MalformedURLException
+    {
+        String movieDescription;
+
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        movieDescription = movieJson.get("overview").toString();
+
+        return movieDescription;
+    }
+
+    public String getMovieReleaseDateFromJson(String movieJsonStr)
+            throws JSONException, MalformedURLException
+    {
+        String releaseDate;
+
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        releaseDate = movieJson.get("release_date").toString();
+
+        return releaseDate;
+    }
+
+    public String getMovieUserRatingFromJson(String movieJsonStr)
+            throws JSONException, MalformedURLException
+    {
+        String userRating;
+
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        userRating = movieJson.get("vote_average").toString() + " / 10";
+
+        return userRating;
     }
 }
