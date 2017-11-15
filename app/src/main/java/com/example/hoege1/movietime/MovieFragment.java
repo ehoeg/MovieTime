@@ -3,13 +3,18 @@ package com.example.hoege1.movietime;
 
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,9 +49,17 @@ public class MovieFragment extends Fragment
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        updateMovieData();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         updateMovieData();
     }
 
@@ -55,8 +68,28 @@ public class MovieFragment extends Fragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.movie_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id = item.getItemId();
+        if(id == R.id.settings)
+        {
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
+            return true;
+        }
+
+        return true;
     }
 
     private void updateMovieData()
@@ -74,10 +107,12 @@ public class MovieFragment extends Fragment
 
         // Construct the URL for the movie database
         final String FORECAST_BASE_URL = "https://api.themoviedb.org/3";
-        final String QUERY_STRING = "movie/now_playing";
+        //final String QUERY_STRING = "movie/now_playing";
+        //final String QUERY_STRING = "movie/popular";
         final String LANGUAGE_STRING = "en-US";
         final String PAGE_NUM_STRING = "1";
         final String API_KEY_STRING = "7f85df63fe917ac57f3c002f0b52ede6";
+
 
         private List<String> getMoviePosterFromJson(String movieJsonStr)
                 throws JSONException, MalformedURLException
@@ -126,6 +161,23 @@ public class MovieFragment extends Fragment
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String queryType = prefs.getString("MovieSortOrder", "Now Playing");
+            String QUERY_STRING = "movie/now_playing";
+
+            if(queryType.equals("Now Playing"))
+            {
+                QUERY_STRING = "movie/now_playing";
+            }
+            else if(queryType.equals("Popular"))
+            {
+                QUERY_STRING = "movie/popular";
+            }
+            else if(queryType.equals("Top Rated"))
+            {
+                QUERY_STRING = "movie/top_rated";
+            }
 
             try
             {
