@@ -96,6 +96,9 @@ public class MovieProvider extends ContentProvider
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
+        // Register the cursor to notify anyone using the content provider if a query is made
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
 
@@ -189,6 +192,8 @@ public class MovieProvider extends ContentProvider
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
+        // Notify anyone listening if a change to the database has been made
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
@@ -227,6 +232,7 @@ public class MovieProvider extends ContentProvider
         // Because a null deletes all rows
         if (rowsDeleted != 0)
         {
+            // Notify anyone listening if a change to the database has been made
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;
@@ -259,7 +265,9 @@ public class MovieProvider extends ContentProvider
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        if (rowsUpdated != 0) {
+        if (rowsUpdated != 0)
+        {
+            // Notify anyone listening if a change to the database has been made
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsUpdated;

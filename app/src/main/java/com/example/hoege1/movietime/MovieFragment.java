@@ -31,6 +31,7 @@ import android.widget.ListView;
 
 import com.example.hoege1.movietime.data.MovieContract;
 import com.example.hoege1.movietime.data.MovieDbHelper;
+import com.example.hoege1.movietime.data.MovieProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,6 +66,10 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
 
     private static final int MOVIE_LOADER = 0;
     private static boolean initMovieLoader = true;
+
+    private static boolean mNowPlayingDbLoaded = false;
+    private static boolean mTopRatedDbLoaded = false;
+    private static boolean mPopularDbLoaded = false;
 
     private static String[] NOW_PLAYING_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -153,7 +158,7 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
 
     public MovieFragment()
     {
-        // Required empty public constructor
+        // empty constructor
     }
 
     @Override
@@ -165,7 +170,37 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
         if(!queryType.equals(mMovieSortOrder))
         {
             mMovieSortOrder = queryType;
-            updateMovieData();
+
+            // Only load the databases once - movies don't change often
+            if(queryType.equals(POPULAR_STRING) && !mPopularDbLoaded)
+            {
+                mPopularDbLoaded = true;
+
+                // delete any entries before adding new ones
+                getActivity().getContentResolver().delete(MovieContract.PopularEntry.CONTENT_URI, null, null);
+
+                // add new entries
+                updateMovieData(queryType);
+            }
+            else if(queryType.equals(NOW_PLAYING_STRING) && !mNowPlayingDbLoaded)
+            {
+                mNowPlayingDbLoaded = true;
+
+                // delete any entries before adding new ones
+                getActivity().getContentResolver().delete(MovieContract.NowPlayingEntry.CONTENT_URI, null, null);
+
+                // add new entries
+                updateMovieData(queryType);
+            }
+            else if (queryType.equals(TOP_RATED_STRING) && !mTopRatedDbLoaded)
+            {
+                mTopRatedDbLoaded = true;
+
+                // delete any entries before adding new ones
+                getActivity().getContentResolver().delete(MovieContract.TopRatedEntry.CONTENT_URI, null, null);
+
+                updateMovieData(queryType);
+            }
         }
 
         // Call the movie loader
@@ -201,8 +236,6 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movie);
         gridView.setAdapter(mMovieAdapter);
 
-        //getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
-
         return rootView;
     }
 
@@ -230,9 +263,9 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
         return true;
     }
 
-    public void updateMovieData()
+    public void updateMovieData(String queryString)
     {
-        FetchMovieTask movieData = new FetchMovieTask(getActivity());
+        FetchMovieTask movieData = new FetchMovieTask(getActivity(), queryString);
         movieData.execute();
     }
 

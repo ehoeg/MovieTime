@@ -19,7 +19,6 @@ public class MoviePosterAdapter extends ArrayAdapter
 {
     private Context context;
     private LayoutInflater inflater;
-
     private String[] imageUrls;
 
     public MoviePosterAdapter(Context context, String[] imageUrls)

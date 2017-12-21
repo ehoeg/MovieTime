@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 
+import com.example.hoege1.movietime.data.MovieContract;
+
 public class MainActivity extends AppCompatActivity
 {
     @Override
@@ -22,8 +24,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume()
+    protected void onRestart()
     {
-        super.onResume();
+        super.onRestart();
     }
 }
