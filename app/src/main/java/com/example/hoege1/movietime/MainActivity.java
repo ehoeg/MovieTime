@@ -20,4 +20,10 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
     }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+    }
 }

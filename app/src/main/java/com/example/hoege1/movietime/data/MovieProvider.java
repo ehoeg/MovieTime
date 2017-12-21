@@ -19,7 +19,7 @@ public class MovieProvider extends ContentProvider
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDbHelper mMovieHelper;
 
-    static final int MOVIE = 100;
+    static final int FAVORITE = 100;
     static final int NOW_PLAYING = 200;
     static final int TOP_RATED = 300;
     static final int POPULAR = 400;
@@ -38,10 +38,10 @@ public class MovieProvider extends ContentProvider
         Cursor retCursor;
         switch (sUriMatcher.match(uri))
         {
-            case MOVIE:
+            case FAVORITE:
             {
                 retCursor = mMovieHelper.getReadableDatabase().query(
-                        MovieContract.MovieEntry.TABLE_NAME,
+                        MovieContract.FavoriteEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -108,8 +108,8 @@ public class MovieProvider extends ContentProvider
 
         switch (match)
         {
-            case MOVIE:
-                return MovieContract.MovieEntry.CONTENT_TYPE;
+            case FAVORITE:
+                return MovieContract.FavoriteEntry.CONTENT_TYPE;
             case NOW_PLAYING:
                 return MovieContract.NowPlayingEntry.CONTENT_TYPE;
             case TOP_RATED:
@@ -130,12 +130,12 @@ public class MovieProvider extends ContentProvider
         Uri returnUri;
 
         switch (match) {
-            case MOVIE:
+            case FAVORITE:
             {
-                long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, contentValues);
+                long _id = db.insert(MovieContract.FavoriteEntry.TABLE_NAME, null, contentValues);
                 if ( _id > 0 )
                 {
-                    returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
+                    returnUri = MovieContract.FavoriteEntry.buildFavoriteUri(_id);
                 }
                 else
                 {
@@ -205,8 +205,8 @@ public class MovieProvider extends ContentProvider
             selection = "1";
         }
         switch (match) {
-            case MOVIE:
-                rowsDeleted = db.delete(MovieContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
+            case FAVORITE:
+                rowsDeleted = db.delete(MovieContract.FavoriteEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
             case NOW_PLAYING:
@@ -240,8 +240,8 @@ public class MovieProvider extends ContentProvider
         int rowsUpdated;
 
         switch (match) {
-            case MOVIE:
-                rowsUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+            case FAVORITE:
+                rowsUpdated = db.update(MovieContract.FavoriteEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
 
             case NOW_PLAYING:
@@ -275,7 +275,7 @@ public class MovieProvider extends ContentProvider
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
 
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_FAVORITE, FAVORITE);
         matcher.addURI(authority, MovieContract.PATH_NOW_PLAYING, NOW_PLAYING);
         matcher.addURI(authority, MovieContract.PATH_TOP_RATED, TOP_RATED);
         matcher.addURI(authority, MovieContract.PATH_POPULAR, POPULAR);

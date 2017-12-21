@@ -32,6 +32,36 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.hoege1.movietime.MainActivity" />
         </activity>
+
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.MovieProvider"
+            android:exported="false"
+            android:syncable="true" />
+
+        <!-- MovieTime's dummy authentication service -->
+        <service android:name=".sync.MovieAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <!-- The SyncAdapter service -->
+        <service
+            android:name=".sync.MovieSyncService"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
     </application>
 
 </manifest>
