@@ -3,10 +3,7 @@ package com.example.hoege1.movietime.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Movie;
 import android.util.Log;
-
-import com.example.hoege1.movietime.FetchMovieTask;
 
 /**
  * Created by hoege1 on 12/4/17.
@@ -19,7 +16,7 @@ public class MovieDbHelper extends SQLiteOpenHelper
     // If you change the database schema, you must increment the database version.
     private static final int DATABASE_VERSION = 1;
 
-    static final String DATABASE_NAME = "movie.db";
+    static final String DATABASE_NAME = "movie";
 
     public MovieDbHelper(Context context)
     {
@@ -39,9 +36,9 @@ public class MovieDbHelper extends SQLiteOpenHelper
 
         // Create a table to hold popular movies
         final String SQL_CREATE_POPULAR_MOVIES_TABLE = "CREATE TABLE IF NOT EXISTS " + MovieContract.PopularEntry.TABLE_NAME + " (" +
-                MovieContract.PopularEntry._ID + " INTEGER PRIMARY KEY, " +
+                MovieContract.PopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieContract.PopularEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
-                MovieContract.PopularEntry.COLUMN_ID + " INTEGER NOT NULL, " +
+                MovieContract.PopularEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 MovieContract.PopularEntry.COLUMN_VIDEO + " INTEGER NOT NULL, " +
                 MovieContract.PopularEntry.COLUMN_VOTE_AVERAGE + " INTEGER NOT NULL, " +
                 MovieContract.PopularEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -50,16 +47,16 @@ public class MovieDbHelper extends SQLiteOpenHelper
                 MovieContract.PopularEntry.COLUMN_ORIGINAL_LANGUAGE + " TEXT NOT NULL, " +
                 MovieContract.PopularEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
                 //MovieContract.PopularEntry.COLUMN_GENRE_IDS + " INTEGER NOT NULL, " +
-                MovieContract.PopularEntry.COLUMN_BACKDROP_PATHS +" TEXT NOT NULL, " +
+                MovieContract.PopularEntry.COLUMN_BACKDROP_PATHS + " TEXT NOT NULL, " +
                 MovieContract.PopularEntry.COLUMN_ADULT + " INTEGER NOT NULL, " +
                 MovieContract.PopularEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
                 MovieContract.PopularEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL );";
 
         // Create a table to hold now playing movies
         final String SQL_CREATE_NOW_PLAYING_MOVIES_TABLE = "CREATE TABLE IF NOT EXISTS " + MovieContract.NowPlayingEntry.TABLE_NAME + " (" +
-                MovieContract.NowPlayingEntry._ID + " INTEGER PRIMARY KEY, " +
+                MovieContract.NowPlayingEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieContract.NowPlayingEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
-                MovieContract.NowPlayingEntry.COLUMN_ID + " INTEGER NOT NULL, " +
+                MovieContract.NowPlayingEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 MovieContract.NowPlayingEntry.COLUMN_VIDEO + " INTEGER NOT NULL, " +
                 MovieContract.NowPlayingEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
                 MovieContract.NowPlayingEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -68,16 +65,16 @@ public class MovieDbHelper extends SQLiteOpenHelper
                 MovieContract.NowPlayingEntry.COLUMN_ORIGINAL_LANGUAGE + " TEXT NOT NULL, " +
                 MovieContract.NowPlayingEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
                 //MovieContract.NowPlayingEntry.COLUMN_GENRE_IDS + "INTEGER NOT NULL, " +
-                MovieContract.NowPlayingEntry.COLUMN_BACKDROP_PATHS +" TEXT NOT NULL, " +
+                MovieContract.NowPlayingEntry.COLUMN_BACKDROP_PATHS + " TEXT NOT NULL, " +
                 MovieContract.NowPlayingEntry.COLUMN_ADULT + " INTEGER NOT NULL, " +
                 MovieContract.NowPlayingEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
                 MovieContract.NowPlayingEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL );";
 
         // Create a table to hold top rated movies
         final String SQL_CREATE_TOP_RATED_MOVIES_TABLE = "CREATE TABLE IF NOT EXISTS " + MovieContract.TopRatedEntry.TABLE_NAME + " (" +
-                MovieContract.TopRatedEntry._ID + " INTEGER PRIMARY KEY, " +
+                MovieContract.TopRatedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieContract.TopRatedEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
-                MovieContract.TopRatedEntry.COLUMN_ID + " INTEGER NOT NULL, " +
+                MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_VIDEO + " INTEGER NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -86,7 +83,7 @@ public class MovieDbHelper extends SQLiteOpenHelper
                 MovieContract.TopRatedEntry.COLUMN_ORIGINAL_LANGUAGE + " TEXT NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
                 //MovieContract.TopRatedEntry.COLUMN_GENRE_IDS + "INTEGER NOT NULL, " +
-                MovieContract.TopRatedEntry.COLUMN_BACKDROP_PATHS +" TEXT NOT NULL, " +
+                MovieContract.TopRatedEntry.COLUMN_BACKDROP_PATHS + " TEXT NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_ADULT + " INTEGER NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL );";
@@ -110,7 +107,7 @@ public class MovieDbHelper extends SQLiteOpenHelper
         // It does NOT depend on the version number for your application.
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.FavoriteEntry.TABLE_NAME);
+        //sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.FavoriteEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.PopularEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.TopRatedEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.NowPlayingEntry.TABLE_NAME);

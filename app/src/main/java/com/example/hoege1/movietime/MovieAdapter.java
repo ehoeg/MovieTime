@@ -9,6 +9,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.hoege1.movietime.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -49,7 +50,7 @@ public class MovieAdapter extends CursorAdapter
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         // Read poster image url from cursor
-        String posterPath = cursor.getString(MovieFragment.COL_POSTER_PATH);
+        String posterPath = cursor.getString(MovieContract.COL_POSTER_PATH);
 
         // Use picasso to load the grid view
         Picasso.with(context).load(posterPath).into((ImageView) viewHolder.posterView);

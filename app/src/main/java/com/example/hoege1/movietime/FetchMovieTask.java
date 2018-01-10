@@ -1,24 +1,11 @@
 package com.example.hoege1.movietime;
 
-import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
 
-import com.example.hoege1.movietime.DetailActivity;
-import com.example.hoege1.movietime.MovieFragment;
-import com.example.hoege1.movietime.MoviePosterAdapter;
-import com.example.hoege1.movietime.R;
 import com.example.hoege1.movietime.data.MovieContract;
 
 import org.json.JSONArray;
@@ -30,11 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by hoege1 on 12/10/17.
@@ -146,7 +131,7 @@ public class FetchMovieTask extends AsyncTask<Void, Void, Void>
                     if(mQueryString.equals("Now Playing"))
                     {
                         movieValues.put(MovieContract.NowPlayingEntry.COLUMN_VOTE_COUNT, movieData.getInt("vote_count"));
-                        movieValues.put(MovieContract.NowPlayingEntry.COLUMN_ID, movieData.getInt("id"));
+                        movieValues.put(MovieContract.NowPlayingEntry.COLUMN_MOVIE_ID, movieData.getInt("id"));
                         movieValues.put(MovieContract.NowPlayingEntry.COLUMN_VIDEO, movieData.getBoolean("video"));
                         movieValues.put(MovieContract.NowPlayingEntry.COLUMN_VOTE_AVERAGE, movieData.getDouble("vote_average"));
                         movieValues.put(MovieContract.NowPlayingEntry.COLUMN_TITLE, movieData.getString("title"));
@@ -165,7 +150,7 @@ public class FetchMovieTask extends AsyncTask<Void, Void, Void>
                     else if(mQueryString.equals("Top Rated"))
                     {
                         movieValues.put(MovieContract.TopRatedEntry.COLUMN_VOTE_COUNT, movieData.getInt("vote_count"));
-                        movieValues.put(MovieContract.TopRatedEntry.COLUMN_ID, movieData.getInt("id"));
+                        movieValues.put(MovieContract.TopRatedEntry.COLUMN_MOVIE_ID, movieData.getInt("id"));
                         movieValues.put(MovieContract.TopRatedEntry.COLUMN_VIDEO, movieData.getBoolean("video"));
                         movieValues.put(MovieContract.TopRatedEntry.COLUMN_VOTE_AVERAGE, movieData.getDouble("vote_average"));
                         movieValues.put(MovieContract.TopRatedEntry.COLUMN_TITLE, movieData.getString("title"));
@@ -184,7 +169,7 @@ public class FetchMovieTask extends AsyncTask<Void, Void, Void>
                     else if(mQueryString.equals("Popular"))
                     {
                         movieValues.put(MovieContract.PopularEntry.COLUMN_VOTE_COUNT, movieData.getInt("vote_count"));
-                        movieValues.put(MovieContract.PopularEntry.COLUMN_ID, movieData.getInt("id"));
+                        movieValues.put(MovieContract.PopularEntry.COLUMN_MOVIE_ID, movieData.getInt("id"));
                         movieValues.put(MovieContract.PopularEntry.COLUMN_VIDEO, movieData.getBoolean("video"));
                         movieValues.put(MovieContract.PopularEntry.COLUMN_VOTE_AVERAGE, movieData.getDouble("vote_average"));
                         movieValues.put(MovieContract.PopularEntry.COLUMN_TITLE, movieData.getString("title"));

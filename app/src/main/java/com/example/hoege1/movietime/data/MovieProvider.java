@@ -1,5 +1,6 @@
 package com.example.hoege1.movietime.data;
 
+import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -290,5 +291,15 @@ public class MovieProvider extends ContentProvider
 
         // For each type of URI you want to add, create a corresponding code.
         return matcher;
+    }
+
+    // You do not need to call this method. This is a method specifically to assist the testing
+    // framework in running smoothly. You can read more at:
+    // http://developer.android.com/reference/android/content/ContentProvider.html#shutdown()
+    @Override
+    @TargetApi(11)
+    public void shutdown() {
+        mMovieHelper.close();
+        super.shutdown();
     }
 }

@@ -1,13 +1,16 @@
 package com.example.hoege1.movietime;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.hoege1.movietime.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -29,49 +32,42 @@ public class DetailActivity extends AppCompatActivity
         setContentView(R.layout.activity_detail);
         this.getSupportActionBar().setTitle("Movie Details");
 
-        MovieJsonHelperFunctions movieHelper = new MovieJsonHelperFunctions();
-
         Intent intent = this.getIntent();
-        String movieDataStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-        Log.d(LOG_TAG, movieDataStr);
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT))
+        String movieTable = intent.getStringExtra("queryTable");
+        Integer position = (intent.getIntExtra("position", 1) + 1);
+        Uri detailUri = MovieContract.MovieContractHelper.getContentUri(movieTable);
+
+        String selection = "_id =?";
+        String selectionArgs[] = { position.toString() };
+        Cursor cursor = this.getContentResolver().query(detailUri, MovieContract.MovieContractHelper.getProjection(movieTable), selection, selectionArgs, "_id ASC");
+
+        // Make sure we got a result
+        if(cursor.moveToFirst())
         {
-            try
-            {
-                // Display the movie poster
-                String moviePosterPath = movieHelper.getMoviePosterFromJson(movieDataStr);
-                Picasso.with(this).load(moviePosterPath).into((ImageView) findViewById(R.id.detail_movie_image_view));
+            // Display the movie title
+            TextView movieTitleTextView = this.findViewById(R.id.detail_movie_text_view);
+            movieTitleTextView.setTextColor(Color.WHITE);
+            movieTitleTextView.setBackgroundColor(Color.rgb(0,100,0));
+            movieTitleTextView.setText(cursor.getString(MovieContract.COL_ORIGINAL_TITLE));
 
-                // Display the movie title
-                String movieTitle = movieHelper.getMovieTitleFromJson(movieDataStr);
-                TextView movieTitleTextView = this.findViewById(R.id.detail_movie_text_view);
-                movieTitleTextView.setText(movieTitle);
-                movieTitleTextView.setTextColor(Color.WHITE);
-                movieTitleTextView.setBackgroundColor(Color.rgb(0,100,0));
+            // Display the movie poster
+            String moviePosterPath = cursor.getString(MovieContract.COL_POSTER_PATH);
+            Picasso.with(this).load(moviePosterPath).into((ImageView) findViewById(R.id.detail_movie_image_view));
 
-                // Display the movie description
-                String movieDescription = movieHelper.getMovieDescriptionFromJson(movieDataStr);
-                TextView movieDescriptionTextView = this.findViewById(R.id.detail_movie_description_text_view);
-                movieDescriptionTextView.setText(movieDescription);
+            // Display the movie description
+            String movieDescription = cursor.getString(MovieContract.COL_OVERVIEW);
+            TextView movieDescriptionTextView = this.findViewById(R.id.detail_movie_description_text_view);
+            movieDescriptionTextView.setText(movieDescription);
 
-                // Display the release date
-                String movieReleaseDate = movieHelper.getMovieReleaseDateFromJson(movieDataStr);
-                TextView movieReleaseDateTextView = this.findViewById(R.id.detail_movie_release_date_text_view);
-                movieReleaseDateTextView.setText(movieReleaseDate);
+            // Display the release date
+            String movieReleaseDate = cursor.getString(MovieContract.COL_RELEASE_DATE);
+            TextView movieReleaseDateTextView = this.findViewById(R.id.detail_movie_release_date_text_view);
+            movieReleaseDateTextView.setText(movieReleaseDate);
 
-                // Display the user rating
-                String movieRating = movieHelper.getMovieUserRatingFromJson(movieDataStr);
-                TextView movieRatingTextView = this.findViewById(R.id.detail_movie_user_rating_text_view);
-                movieRatingTextView.setText(movieRating);
-            }
-            catch (MalformedURLException e)
-            {
-                e.printStackTrace();
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
+            // Display the user rating
+            String movieRating = cursor.getString(MovieContract.COL_VOTE_AVERAGE) + " / 10";
+            TextView movieRatingTextView = this.findViewById(R.id.detail_movie_user_rating_text_view);
+            movieRatingTextView.setText(movieRating);
         }
     }
 }
