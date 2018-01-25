@@ -144,7 +144,8 @@ public class MovieProvider extends ContentProvider
                 }
                 else
                 {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    returnUri = MovieContract.FavoriteEntry.buildFavoriteUri(_id);
+                    //throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
             }
