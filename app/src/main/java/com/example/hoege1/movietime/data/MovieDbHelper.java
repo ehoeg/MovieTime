@@ -14,9 +14,9 @@ public class MovieDbHelper extends SQLiteOpenHelper
     private final String LOG_TAG = MovieDbHelper.class.getSimpleName();
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
-    static final String DATABASE_NAME = "movie";
+    static final String DATABASE_NAME = "movie.db";
 
     public MovieDbHelper(Context context)
     {
@@ -27,11 +27,22 @@ public class MovieDbHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
         // Create a table to hold the movie details
-        //final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE" + MovieContract.FavoriteEntry.TABLE_NAME + " (" +
-        //        MovieContract.FavoriteEntry._ID + " INTEGER PRIMARY KEY," +
-        //        MovieContract.FavoriteEntry.COLUMN_POPULAR_ID + "INTEGER, " +
-        //        MovieContract.FavoriteEntry.COLUMN_TOP_RATED_ID + "INTEGER, " +
-        //        MovieContract.FavoriteEntry.COLUMN_NOW_PLAYING_ID + "INTEGER );";
+        final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE IF NOT EXISTS " + MovieContract.FavoriteEntry.TABLE_NAME + " (" +
+                MovieContract.FavoriteEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.FavoriteEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_VIDEO + " INTEGER NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE + " INTEGER NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_POPULARITY + " REAL NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_ORIGINAL_LANGUAGE + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
+                //MovieContract.FavoriteEntry.COLUMN_GENRE_IDS + " INTEGER NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_BACKDROP_PATHS + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_ADULT + " INTEGER NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
+                MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL );";
 
 
         // Create a table to hold popular movies
@@ -88,11 +99,7 @@ public class MovieDbHelper extends SQLiteOpenHelper
                 MovieContract.TopRatedEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
                 MovieContract.TopRatedEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL );";
 
-        Log.d(LOG_TAG, SQL_CREATE_TOP_RATED_MOVIES_TABLE);
-        Log.d(LOG_TAG, SQL_CREATE_NOW_PLAYING_MOVIES_TABLE);
-        Log.d(LOG_TAG, SQL_CREATE_POPULAR_MOVIES_TABLE);
-
-        //sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_POPULAR_MOVIES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_NOW_PLAYING_MOVIES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_TOP_RATED_MOVIES_TABLE);
@@ -107,7 +114,7 @@ public class MovieDbHelper extends SQLiteOpenHelper
         // It does NOT depend on the version number for your application.
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
-        //sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.FavoriteEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.FavoriteEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.PopularEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.TopRatedEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.NowPlayingEntry.TABLE_NAME);

@@ -133,7 +133,8 @@ public class MovieProvider extends ContentProvider
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
-        switch (match) {
+        switch (match)
+        {
             case FAVORITE:
             {
                 long _id = db.insert(MovieContract.FavoriteEntry.TABLE_NAME, null, contentValues);

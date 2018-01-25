@@ -58,9 +58,44 @@ public class MovieContract
         // Table name
         public static final String TABLE_NAME = "favorite";
 
-        public static final String COLUMN_POPULAR_ID = "popular_id";
-        public static final String COLUMN_TOP_RATED_ID = "top_rated_id";
-        public static final String COLUMN_NOW_PLAYING_ID = "now_playing_id";
+        // Columns
+        public static final String COLUMN_VOTE_COUNT = "vote_count";
+        public static final String COLUMN_MOVIE_ID = "id";
+        public static final String COLUMN_VIDEO = "video";
+        public static final String COLUMN_VOTE_AVERAGE = "vote_average";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_POPULARITY = "popularity";
+        public static final String COLUMN_POSTER_PATH = "poster_path";
+        public static final String COLUMN_ORIGINAL_LANGUAGE = "original_language";
+        public static final String COLUMN_ORIGINAL_TITLE = "original_title";
+        public static final String COLUMN_GENRE_IDS = "genre_ids";
+        public static final String COLUMN_BACKDROP_PATHS = "backdrop_paths";
+        public static final String COLUMN_ADULT = "adult";
+        public static final String COLUMN_OVERVIEW = "overview";
+        public static final String COLUMN_RELEASE_DATE = "release_date";
+
+        public static String[] FAVORITE_COLUMNS = {
+                // In this case the id needs to be fully qualified with a table name, since
+                // the content provider joins the location & weather tables in the background
+                // (both have an _id column)
+                // On the one hand, that's annoying.  On the other, you can search the weather table
+                // using the location set by the user, which is only in the Location table.
+                // So the convenience is worth it.
+                MovieContract.FavoriteEntry.TABLE_NAME + "." + MovieContract.FavoriteEntry._ID,
+                MovieContract.FavoriteEntry.COLUMN_VOTE_COUNT,
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,
+                MovieContract.FavoriteEntry.COLUMN_VIDEO,
+                MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,
+                MovieContract.FavoriteEntry.COLUMN_TITLE,
+                MovieContract.FavoriteEntry.COLUMN_POPULARITY,
+                MovieContract.FavoriteEntry.COLUMN_POSTER_PATH,
+                MovieContract.FavoriteEntry.COLUMN_ORIGINAL_LANGUAGE,
+                MovieContract.FavoriteEntry.COLUMN_ORIGINAL_TITLE,
+                MovieContract.FavoriteEntry.COLUMN_BACKDROP_PATHS,
+                MovieContract.FavoriteEntry.COLUMN_ADULT,
+                MovieContract.FavoriteEntry.COLUMN_OVERVIEW,
+                MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE
+        };
 
         public static Uri buildFavoriteUri(long id)
         {
@@ -246,9 +281,13 @@ public class MovieContract
             {
                 contentUri = MovieContract.NowPlayingEntry.CONTENT_URI;
             }
-            else // Popular
+            else if(queryType.equals("Popular"))
             {
                 contentUri = MovieContract.PopularEntry.CONTENT_URI;
+            }
+            else // Favorites
+            {
+                contentUri = MovieContract.FavoriteEntry.CONTENT_URI;
             }
             return contentUri;
         }
@@ -264,9 +303,13 @@ public class MovieContract
             {
                 projection = MovieContract.NowPlayingEntry.NOW_PLAYING_COLUMNS;
             }
-            else // POPULAR_STRING
+            else if(queryType.equals("Popular"))
             {
                 projection = MovieContract.PopularEntry.POPULAR_COLUMNS;
+            }
+            else // Favorites
+            {
+                projection = MovieContract.FavoriteEntry.FAVORITE_COLUMNS;
             }
             return projection;
         }

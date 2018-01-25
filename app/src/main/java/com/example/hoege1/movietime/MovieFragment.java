@@ -66,6 +66,7 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
     private static boolean mNowPlayingDbLoaded = false;
     private static boolean mTopRatedDbLoaded = false;
     private static boolean mPopularDbLoaded = false;
+    private static boolean mFavoritesDbLoaded = false;
 
     public MovieFragment()
     {
@@ -108,10 +109,20 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
                 mTopRatedDbLoaded = true;
 
                 // delete any entries before adding new ones
-                //getContext().getContentResolver().delete(MovieContract.TopRatedEntry.CONTENT_URI, null, null);
+                getContext().getContentResolver().delete(MovieContract.TopRatedEntry.CONTENT_URI, null, null);
 
                 // add new entries
                 Utility.updateMovieData(queryType, getActivity());
+            }
+            else if (queryType.equals("Favorites") && !mFavoritesDbLoaded)
+            {
+                mFavoritesDbLoaded = true;
+
+                // delete any entries before adding new ones
+                //getContext().getContentResolver().delete(MovieContract.FavoriteEntry.CONTENT_URI, null, null);
+
+                // add new entries
+                //Utility.updateMovieData(queryType, getActivity());
             }
         }
 
@@ -153,9 +164,11 @@ public class MovieFragment extends Fragment implements android.support.v4.app.Lo
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
             {
-                Uri detailUri = MovieContract.MovieContractHelper.getContentUri(mMovieSortOrder);
+                Cursor cursor = mMovieAdapter.getCursor();
+                cursor.moveToPosition(position);
+
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("position", position);
+                intent.putExtra("movieTitle", cursor.getString(MovieContract.COL_ORIGINAL_TITLE));
                 intent.putExtra("queryTable", mMovieSortOrder);
                 startActivity(intent);
             }
